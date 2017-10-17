@@ -44,4 +44,9 @@ class Questions
   def replies
     Replies.find_by_question_id(@id)
   end
+
+  def followers
+    QuestionFollows.followers_for_question_id(@id)
+  end
+
 end
