@@ -1,6 +1,6 @@
 require_relative 'database'
 
-class Users
+class Users 
   attr_reader :id
   attr_accessor :fname, :lname
 
@@ -68,5 +68,24 @@ class Users
       users.id;
     SQL
     karma.first['avg_karma']
+  end
+
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, @fname, @lname, @id)
+        UPDATE
+          users
+        SET
+          fname = ?, lname = ?
+        WHERE
+          id = ?;
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, @fname, @lname)
+        INSERT INTO users (fname, lname)
+        VALUES (?, ?);
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
   end
 end

@@ -72,4 +72,25 @@ class Replies
     SQL
     children.map { |child| Replies.new(child) }
   end
+
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, @question_id, @parent_id, @user_id, @body, @id)
+        UPDATE
+          replies
+        SET
+          question_id = ?, parent_id = ?, user_id = ?, body = ?
+        WHERE
+          id = ?;
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, @question_id, @parent_id, @user_id, @body)
+        INSERT INTO replies (question_id, parent_id, user_id, body)
+        VALUES (?, ?, ?, ?);
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+  end
+
+
 end

@@ -1,7 +1,7 @@
 require_relative 'database'
 # require 'byebug'
 
-class Questions
+class Questions 
   attr_reader :id
   attr_accessor :title, :body, :user_id
 
@@ -63,6 +63,25 @@ class Questions
 
   def self.most_liked(n)
     QuestionLikes.most_liked_questions(n)
+  end
+
+  def save
+    if @id
+      QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @user_id, @id)
+        UPDATE
+          questions
+        SET
+          title = ?, body = ?, user_id = ?
+        WHERE
+          id = ?;
+      SQL
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @user_id)
+        INSERT INTO questions (title, body, user_id)
+        VALUES (?, ?, ?);
+      SQL
+      @id = QuestionsDatabase.instance.last_insert_row_id
+    end
   end
 
 end
