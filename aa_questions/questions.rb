@@ -1,7 +1,7 @@
 require_relative 'database'
 # require 'byebug'
 
-class Questions 
+class Questions < ModelBase
   attr_reader :id
   attr_accessor :title, :body, :user_id
 
@@ -10,18 +10,6 @@ class Questions
     @title = options['title']
     @body = options['body']
     @user_id = options['user_id']
-  end
-
-  def self.find_by_id(id)
-    question = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        questions
-      WHERE
-        id = ?;
-    SQL
-    Questions.new(question.first)
   end
 
   def self.find_by_author_id(author_id)

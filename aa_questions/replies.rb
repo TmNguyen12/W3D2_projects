@@ -1,6 +1,6 @@
 require_relative 'database'
 
-class Replies
+class Replies < ModelBase
   attr_reader :id, :question_id, :parent_id, :user_id
   attr_accessor :body
 
@@ -10,18 +10,6 @@ class Replies
     @question_id = options['question_id']
     @parent_id = options['parent_id']
     @body = options['body']
-  end
-
-  def self.find_by_id(id)
-    reply = QuestionsDatabase.instance.execute(<<-SQL, id)
-      SELECT
-        *
-      FROM
-        replies
-      WHERE
-        id = ?;
-    SQL
-    Replies.new(reply.first)
   end
 
   def self.find_by_user_id(user_id)
